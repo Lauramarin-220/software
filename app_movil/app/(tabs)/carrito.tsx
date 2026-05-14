@@ -195,7 +195,7 @@ export default function CarritoScreen() {
 
                 {/* Fila de un ítem: imagen + datos + controles */}
                 <View style={styles.itemRow}>
-                  {/* Imagen del producto. Si no tiene imagen, usa un placeholder genérico.
+                  {/* Imagen del producto. Si no tiene imagen, usa un placehandleolder genérico.
                       La URL apunta al servidor backend local (10.0.2.2 = localhost en emulador Android) */}
                   <Image
                     source={{ uri: item.imagen ? `http://10.0.2.2:5000/${item.imagen}` : 'https://via.placeholder.com/70' }}
