@@ -17,7 +17,7 @@ import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, TextInp
 // lee los parametros para obtener el id del pedido
 import { router } from "expo-router";
 // themedText: texto que aplica colores del tema del dispositivos de manera automatica claro a oscuro
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from '@/components/ui/themed-text';
 // cliente http axios con JWT 
 import  apiClient from '../../src/api/apiClient';
 
