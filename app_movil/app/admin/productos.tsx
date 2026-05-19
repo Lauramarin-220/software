@@ -100,6 +100,6 @@ export default function AdminProductosScreen() {
 
     const isAdmin = user?.rol === 'Administrador';
 
-    
+    /** holaaa */
 
 }
