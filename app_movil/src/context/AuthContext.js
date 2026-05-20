@@ -5,8 +5,8 @@
  * Cualquier componente que se necesite saber si el usuario esta logueando usa un hook useAuth() en lugar de leer el AsyncStorage directamente
  */
 
-import { createContext, useCallback, useContext,useEffect, useMemo, useState } from 'react';
-import authService from '.../services/authService';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import authService from '../services/authService';
 
 // Valor Inicial null: useAuth() valida que esta dentro del provider
 const AuthContext = createContext(null);
@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
     // JWT recibido del backend: su presencia es indica sesion activa 
     const [token, setToken] = useState(null);
     // True mientras se lee asyncStorage al arrancar: evita redirigir antes de tiempo 
-    const [isloading, setLoading] = useState(true);
+    const [isLoadingSession, setIsLoadingSession] = useState(true);
 
     /** 
      * RestoreSession: 
@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
             setUser(session?.user || null);
         } finally {
             // Siempre se termina de cargar como terminada, aunque falle al inicio 
-            setIsLoading(false);
+            setIsLoadingSession(false);
         }
     }, []);
 

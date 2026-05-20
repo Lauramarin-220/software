@@ -15,7 +15,7 @@ import { useState, useEffect } from 'react';
 import {  ActivityIndicator, FlatList, Image, Pressable, Alert, ScrollView, StyleSheet, TextInput, View } from "react-native";
 // lee los parametros para obtener el id del pedido
 import { router } from "expo-router"; 
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from '../../components/themed-text';
 import apiClient from '../../src/api/apiClient';
 import { activarProducto, desactivarProducto, deleteProduct } from '../../src/services/adminService';
 import { useAuth } from '../../src/context/AuthContext';

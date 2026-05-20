@@ -7,7 +7,7 @@
  */
 
 import apiClient from '../api/apiClient';
-import { STORAGE_KEY } from '../utils/constants';
+import { STORAGE_KEYS } from '../utils/constants';
 import { storageGetItem, storageSetItem , storageMultiRemove} from '../utils/storage';
 
 const authService = {
@@ -17,7 +17,7 @@ const authService = {
         const payload = response.data?.data || response.data; // maneja ambos formatos de respuesta 
 
         if (payload?.token) {
-            await storageSetItem(STORAGE_KEY.token, payload.token);
+            await storageSetItem(STORAGE_KEYS.token, payload.token);
         }
 
         if (payload?.usuario) {
@@ -33,13 +33,13 @@ const authService = {
     },
     
     logout: async () => {
-        await storageMultiRemove([STORAGE_KEY.token, STORAGE_KEY.user]);
+        await storageMultiRemove([STORAGE_KEYS.token, STORAGE_KEYS.user]);
     },
 
     //Lee el almacenamiento local la sesion previamente guardada 
     getSession: async () => {
-        const token = await storageGetItem(STORAGE_KEY.token);
-        const userRaw = await storageGetItem(STORAGE_KEY.user);
+        const token = await storageGetItem(STORAGE_KEYS.token);
+        const userRaw = await storageGetItem(STORAGE_KEYS.user);
         const user = userRaw ? JSON.parse(userRaw) : null;
         return { token, user };
     },
@@ -50,7 +50,7 @@ const authService = {
         const usuario = response.data?.data?.usuario || response.data.usuario; // maneja ambos formatos de respuesta
 
         if (usuario) {
-            await storageSetItem(STORAGE_KEY.user, JSON.stringify(usuario));
+            await storageSetItem(STORAGE_KEYS.user, JSON.stringify(usuario));
         }
         return response.data;
     },

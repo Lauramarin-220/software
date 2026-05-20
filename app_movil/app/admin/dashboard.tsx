@@ -16,7 +16,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 // navegacion de expo-router 
 import { router } from "expo-router";
 // bibliotema de iconos de react 
-import { Ionicons } from '@/expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 // cliente http axios con JWT 
 import  apiClient from '../../src/api/apiClient';
 // autenticacion

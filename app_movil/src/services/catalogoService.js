@@ -29,11 +29,11 @@ const catalogoService = {
             return 'https://via.placeholder.com/300/200.png?text=Producto';
         }
 
-        if (path.startWith('http://') || path.startWith('https://')) {
+        if (path.startsWith('http://') || path.startsWith('https://')) {
             return path;
         }
 
-        const origin  = 'http://10.0.2.2:5000';
+        const origin = 'http://10.0.2.2:5000';
         return `${origin}/${path.replace(/^\//, '')}`;
     },
 };

@@ -75,7 +75,7 @@ export default function CarritoScreen() {
             <View style={styles.centered}>
                 {/** spiner circular color indigo */}
                 <ActivityIndicator size="large" color="#6366f1"/>
-                <text style={styles.loadingText}> Cargando Carrito... </text>
+                <Text style={styles.loadingText}> Cargando Carrito... </Text>
             </View>
         );
     }

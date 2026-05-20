@@ -10,7 +10,7 @@
 
 import {  createContext, useCallback, useEffect, useContext, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext';
-import CarritoService from '../services/CarritoService';
+import CarritoService from '../services/carritoService';
 
 const CarritoContext = createContext(null);
 
@@ -47,19 +47,19 @@ export function CarritoProvider({ children }) {
 
         if (isAuthenticated && !prevAuthenticated.current) {
             try {
-                await CarritoService.mergerLocalToBackend();
+                await CarritoService.mergelocalToBackend();
             } catch (error) {
-            console.error('Error al fusionar el carrito local con el backend:', error);
+                console.error('Error al fusionar el carrito local con el backend:', error);
             }
-        } 
+        }
 
         //Actualiza la referencia para el proximo render
         prevAuthenticated.current = isAuthenticated;
 
         setLoading(true);
         try {
-            //GetCarrito decide internamente si consulta el backend o AsyncStorage
-            const snapshot = await CarritoService.getCarrito();
+            // GetCarrito decide internamente si consulta el backend o AsyncStorage
+            const snapshot = await CarritoService.getCarrito(isAuthenticated);
             setItems(snapshot.items);
             setTotalItems(snapshot.totalItems);
             setTotal(snapshot.total);
@@ -94,17 +94,16 @@ export function CarritoProvider({ children }) {
      * modifica la cantidad de un item ya existente en el carrito
      */
     const cambiarCantidad = useCallback(async (itemId, cantidad) => {
-        await CarritoService.updateCantidad({ isAuthenticated, itemId, cantidad });
+        await CarritoService.updateCarrito({ isAuthenticated, itemId, cantidad });
         await hydrate();
-        }, [hydrate, isAuthenticated]
-    );
+    }, [hydrate, isAuthenticated]);
 
     /**
      * Eliminar item del carrito por si id
      * elimina todos los items del carrito de una vez
      */
     const eliminarItem = useCallback(async (itemId) => {
-        await CarritoService.RemoveItem({ isAuthenticated, itemId });
+        await CarritoService.removeItem({ isAuthenticated, itemId });
         await hydrate();
     }, [hydrate, isAuthenticated]);
 
@@ -113,7 +112,7 @@ export function CarritoProvider({ children }) {
      * elimina todos los items del carrito de una vez
      */
     const vaciarCarrito = useCallback(async () => {
-        await CarritoService.clearCarrito(isAuthenticated);
+        await CarritoService.clearcarrito(isAuthenticated);
         await hydrate();
     }, [hydrate, isAuthenticated]);
 

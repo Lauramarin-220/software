@@ -8,15 +8,17 @@
 import { Tabs } from 'expo-router';
 // React necessario para que JSX funcione correctamente
 import React from 'react';
+import { AuthProvider } from '../../src/context/AuthContext';
+import { CarritoProvider } from '../../src/context/CarritoContext';
 // Haptictab version personalizada del boton de la pestaña que agrega vibracion tactil (haptic feedback) al presionar 
 // el tab 
-import { HapticTab } from '@/components/haptic-tab';
+import { HapticTab } from '../../components/haptic-tab';
 //IconSymbols componente que muestra  iconos SF symbols IOS y material de android 
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { IconSymbol } from '../../components/ui/icon-symbol';
 // colors objeto de colores del tema de app claro y oscuro
-import { Colors } from '@/constans/theme';
+import { Colors } from '../../constants/theme';
 // useColorShema hook que detecta si el dispositivo esta en modo claro o oscuro
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from '../../hooks/use-color-scheme';
 
 // TabLayout componente principal que configura toda la barra de navegacion 
 // expo Router lo exporta como default y lo monta automaticamente 
@@ -25,18 +27,19 @@ export default function TabLaLayout() {
     const colorSheme = useColorScheme();
 
     return (
-        // Tabs renderizan la barra de pestañas inferior y gestiona que la pantalla este activa en cada momento
-        <Tabs 
-        screenOptions= {{
-            //TabbarActiveintColor color del icono y texto de la pestaña activa
-            //sincolorSheme es null (no detectado) usa light por defecto
-            tabBarActiveTintColor: Colors[colorSheme ?? 'light'].tint,
-            //headerShown false oculta en el encabezado superior en todas las pantallas
-            headerShown: false,
-            //tabBarButton remplaza el boton estandar por hapticTab con vibracion
-            tabBarButton: HapticTab,
-
-        }}>
+        <AuthProvider>
+          <CarritoProvider>
+            {/* Tabs renderizan la barra de pestañas inferior y gestiona que la pantalla este activa en cada momento */}
+            <Tabs
+              screenOptions={{
+                //TabbarActiveintColor color del icono y texto de la pestaña activa
+                //sincolorSheme es null (no detectado) usa light por defecto
+                tabBarActiveTintColor: Colors[colorSheme ?? 'light'].tint,
+                //headerShown false oculta en el encabezado superior en todas las pantallas
+                headerShown: false,
+                //tabBarButton remplaza el boton estandar por hapticTab con vibracion
+                tabBarButton: HapticTab,
+              }}>
 
         {/** pestaña 1 tienda
          * name=index -> apunta al archivo/index.tsx (pantalla principal)
@@ -65,8 +68,8 @@ export default function TabLaLayout() {
             }}
         />
 
-        {/** pestaña 2 carrito
-         * name=carrito -> apunta al archivo/carrito.tsx (pantalla principal)
+        {/** pestaña 3 cuenta
+         * name=explore -> apunta al archivo/explore.tsx
          */}      
             <Tabs.Screen
             name="explore"
@@ -74,11 +77,13 @@ export default function TabLaLayout() {
                 //Texto que aparece debajo del icono de la barra
                 title: 'Cuenta',
                 //tabBarIcon funcion recibe el color activo o inactivo y devuelve el icono
-                //house.fill = icono de casa rellena (representa el icono de la tienda)
+                //person.circle = icono de usuario
                 tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.circle" color={color} />,
             }}
         />
         </Tabs>
+      </CarritoProvider>
+    </AuthProvider>
     )
 }
 
