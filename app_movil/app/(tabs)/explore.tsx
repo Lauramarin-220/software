@@ -473,7 +473,7 @@ if (!isAuthenticated) {
       ) : null}
 
       {/* ── BOTÓN: MIS PEDIDOS (visible para todos los roles) ───────────── */}
-      <Pressable style={[styles.btn, { backgroundColor: '#0a7ea4' }]} onPress={() => routerPush('/mis-pedidos')}>
+      <Pressable style={[styles.btn, { backgroundColor: '#0a7ea4' }]} onPress={() => routerPush('/pedidos/mis-pedidos')}>
         <Ionicons name="receipt-outline" size={17} color="#fff" />
         <Text style={styles.btnTextWhite}>Mis Pedidos</Text>
       </Pressable>

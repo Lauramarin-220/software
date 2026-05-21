@@ -42,6 +42,10 @@ export async function storageRemoveItem(keys) {
     //siempre limpiar memoryStore primero
     keys.forEach((key) => memoryStore.delete(key));
     await safeCall(async () => {
-        await AsyncStorage.removeItem(keys);
+        if (Array.isArray(keys)) {
+            await AsyncStorage.multiRemove(keys);//
+        } else {
+            await AsyncStorage.removeItem(keys);//
+        }
     }, null);
 }

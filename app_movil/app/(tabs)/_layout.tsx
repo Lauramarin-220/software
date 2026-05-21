@@ -8,8 +8,6 @@
 import { Tabs } from 'expo-router';
 // React necessario para que JSX funcione correctamente
 import React from 'react';
-import { AuthProvider } from '../../src/context/AuthContext';
-import { CarritoProvider } from '../../src/context/CarritoContext';
 // Haptictab version personalizada del boton de la pestaña que agrega vibracion tactil (haptic feedback) al presionar 
 // el tab 
 import { HapticTab } from '../../components/haptic-tab';
@@ -27,9 +25,6 @@ export default function TabLaLayout() {
     const colorSheme = useColorScheme();
 
     return (
-        <AuthProvider>
-          <CarritoProvider>
-            {/* Tabs renderizan la barra de pestañas inferior y gestiona que la pantalla este activa en cada momento */}
             <Tabs
               screenOptions={{
                 //TabbarActiveintColor color del icono y texto de la pestaña activa
@@ -82,8 +77,6 @@ export default function TabLaLayout() {
             }}
         />
         </Tabs>
-      </CarritoProvider>
-    </AuthProvider>
     )
 }
 

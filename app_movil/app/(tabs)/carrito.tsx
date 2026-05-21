@@ -92,13 +92,13 @@ export default function CarritoScreen() {
                     //Boton cancelar cierra el dialogo sin hacer nada 
                     { text: 'Cancela', style: 'cancel' },
                     // boton iniciar sesion lleva a pestañas cuenta explore.tsx
-                    { text: 'Iniciar Sesion', onPress: () => routerReplace('/tabs/explore')},
+                    { text: 'Iniciar Sesion', onPress: () => routerReplace('/explore')}, //
                 ]
             );
             return; //sale de la funcion
         }
         // usuario autenticado navega a la pantalla de pagos
-        routerPush('/checkout');
+        routerPush('/pedidos/checkout');
     };
 
     // Funcion handleVaciarCarrito o sea cargar 

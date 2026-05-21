@@ -118,7 +118,7 @@ export default function PedidoConfirmadoScreen() {
 
       {/* ── Botones de acción ────────────────────────────────────────────── */}
       {/* "Ver mis pedidos": navega al historial con replace (no apila). */}
-      <Pressable style={styles.primaryButton} onPress={() => router.replace('/mis-pedidos')}>
+      <Pressable style={styles.primaryButton} onPress={() => router.replace('/pedidos/mis-pedidos')}>
         <ThemedText style={styles.primaryButtonText}>Ver mis pedidos</ThemedText>
       </Pressable>
 

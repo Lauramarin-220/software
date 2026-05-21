@@ -8,7 +8,7 @@
 
 import apiClient from '../api/apiClient';
 import { STORAGE_KEYS } from '../utils/constants';
-import { storageGetItem, storageSetItem , storageMultiRemove} from '../utils/storage';
+import { storageGetItem, storageSetItem, storageRemoveItem } from '../utils/storage';
 
 const authService = {
     //Envia crendenciales al backend y persisten el token + usuario si son validos
@@ -21,19 +21,19 @@ const authService = {
         }
 
         if (payload?.usuario) {
-            await storageSetItem(STORAGE_KEY.usuario, payload.usuario);
+            await storageSetItem(STORAGE_KEYS.user, payload.usuario);
         }
 
-        return response.data;
+        return payload;
     },
     
-    register: async (name, email, password) => {
-        const response = await apiClient.post('auth/register', { name, email, password});
+    register: async (data) => {
+        const response = await apiClient.post('auth/register', data);
         return response.data;
     },
     
     logout: async () => {
-        await storageMultiRemove([STORAGE_KEYS.token, STORAGE_KEYS.user]);
+        await storageRemoveItem([STORAGE_KEYS.token, STORAGE_KEYS.user]);
     },
 
     //Lee el almacenamiento local la sesion previamente guardada 
@@ -46,13 +46,13 @@ const authService = {
 
     // Actualiza el perfil del usuario autenticado
     updatePerfil: async (data) => {
-        const response = await apiClient.put('auth/profile', data);
+        const response = await apiClient.put('auth/me', data); //profile
         const usuario = response.data?.data?.usuario || response.data.usuario; // maneja ambos formatos de respuesta
 
         if (usuario) {
             await storageSetItem(STORAGE_KEYS.user, JSON.stringify(usuario));
         }
-        return response.data;
+        return usuario;
     },
 
 

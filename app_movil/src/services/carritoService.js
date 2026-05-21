@@ -62,8 +62,9 @@ const carritoService = {
         if (isAuthenticated) {
             const response = await apiClient.get('/cliente/carrito');
             const payload = response.data?.data || response.data || {};
-            const carrito = payload.carrito || {};
-            const items = carrito.Items || carrito.items || [];
+            // Backend returns { data: { items: [...] , resumen: {...} } }
+            // Support both shapes: payload.items OR payload.carrito.items
+            const items = payload.items || payload.Items || (payload.carrito && (payload.carrito.items || payload.carrito.Items)) || [];
             return summarize(items);
         }
 

@@ -104,11 +104,12 @@ type Detalle = {
         // efecto de carga de pedido
         // se ejecuta cuando el id cambia en la ruta 
         useEffect(() => {
-            if (pedidoId) {
+            if (!pedidoId) {
                 setLoading(false);
                 setErrorMessage('Pedido invalido');
                 return;
             }
+          
             const loadPedido = async () => {
                 setLoading(true);
                 setErrorMessage('');
@@ -117,7 +118,8 @@ type Detalle = {
                     const data = await pedidoService.getPedidoById(pedidoId);
                     setPedido(data);
                 } catch (error) {
-                    setErrorMessage((error as Error).message || 'No fue posible cargar el pedido');
+                    const msg = (error as any)?.response?.data?.message || (error as Error).message || 'No se pudo cargar el pedido';
+                    setErrorMessage(msg);
                 } finally {
                     setLoading(false);
                 }
@@ -141,7 +143,7 @@ type Detalle = {
       <View style={styles.centered}>
         <ThemedText type="title">No se encontró el pedido</ThemedText>
         <ThemedText style={styles.subtitle}>{errorMessage || 'Intenta de nuevo más tarde.'}</ThemedText>
-        <Pressable style={styles.primaryButton} onPress={() => router.replace('/mis-pedidos')}>
+        <Pressable style={styles.primaryButton} onPress={() => router.replace('/pedidos/mis-pedidos')}>
           <ThemedText style={styles.primaryButtonText}>Volver a pedidos</ThemedText>
         </Pressable>
       </View>
@@ -246,7 +248,7 @@ type Detalle = {
         ) : null}
 
         {/* Navega al historial de pedidos */}
-        <Pressable style={styles.secondaryButton} onPress={() => router.replace('/mis-pedidos')}>
+        <Pressable style={styles.secondaryButton} onPress={() => router.replace('/pedidos/mis-pedidos')}>
           <ThemedText>Mis pedidos</ThemedText>
         </Pressable>
 

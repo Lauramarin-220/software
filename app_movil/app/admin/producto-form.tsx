@@ -9,12 +9,13 @@
 
 
 //manejo de variables de estado local 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 //importar componentes 
 
 import {  Alert, Button, ScrollView, StyleSheet, TextInput, Text } from "react-native";
 // lee los parametros para obtener el id del pedido
 import { useLocalSearchParams, useRouter } from "expo-router"; // nagacion y parametros de ruta
+import apiClient from '../../src/api/apiClient';
 import { createProduct, updateProduct } from '../../src/services/adminService';
 /**
  *  tipo de producto 
@@ -28,6 +29,8 @@ type Producto = {
     precio?: number;
     stock?: number;
     imagen?: string;
+    categoriaId?: number;
+    subcategoriaId?: number;
 };
 
 export default function AdminProductoForm() {
@@ -76,8 +79,33 @@ export default function AdminProductoForm() {
     // precio y stock se guardan como string para facilitar la entrada de textInput
     const [ precio, setPrecio ] = useState(producto?.precio?.toString() ?? '');
     const [ stock, setStock ] = useState(producto?.stock?.toString() ?? '');
+    const [ categoriaId, setCategoriaId ] = useState(producto?.categoriaId?.toString() ?? '');
+    const [ subcategoriaId, setSubcategoriaId ] = useState(producto?.subcategoriaId?.toString() ?? '');
     const [ imagen, setImagen ] = useState(producto?.imagen ?? '');
+    const [ categorias, setCategorias ] = useState<any[]>([]);
+    const [ subcategorias, setSubcategorias ] = useState<any[]>([]);
     const [ loading, SetLoading ] = useState(false);
+
+    useEffect(() => {
+        const loadCatalog = async () => {
+            try {
+                const [catsRes, subsRes] = await Promise.all([
+                    apiClient.get('/admin/categorias'),
+                    apiClient.get('/admin/subcategorias'),
+                ]);
+
+                const cats = catsRes.data?.data?.categorias || catsRes.data?.categorias || [];
+                const subs = subsRes.data?.data?.subcategorias || subsRes.data?.subcategorias || [];
+
+                setCategorias(Array.isArray(cats) ? cats : []);
+                setSubcategorias(Array.isArray(subs) ? subs : []);
+            } catch (error) {
+                console.error('Error cargando categorias/subcategorias', error);
+            }
+        };
+
+        loadCatalog();
+    }, []);
 
     /**
      * funcion handleSubmit
@@ -86,20 +114,22 @@ export default function AdminProductoForm() {
      *  y regresa a la pantalla anterior si fue existoso 
      */
     const handleSubmit = async () => {
-        // validacion basica los 4 campos obligarios no pueden estar vacios 
-        if (!nombre || !descripcion || !precio || !stock) {
-            Alert.alert('Error', 'Todos los campos son obligatorios');
+        // validacion basica los 6 campos obligatorios no pueden estar vacios 
+        if (!nombre || !descripcion || !precio || !stock || !categoriaId || !subcategoriaId) {
+            Alert.alert('Error', 'Todos los campos son obligatorios, incluyendo categoría y subcategoría');
             return; // detiene la ejecucion si hacer la peticion http
         }
 
         SetLoading(true); // deshabilita el boton durante la peticion 
         try {
-            // construye el objeto de datos convirtiendo precio y stock a numerico
+            // construye el objeto de datos convirtiendo precio, stock y las IDs a numerico
             const data = {
                 nombre,
                 descripcion,
                 precio: parseFloat(precio),
-                stock: parseInt(stock, 10)
+                stock: parseInt(stock, 10),
+                categoriaId: parseInt(categoriaId, 10),
+                subcategoriaId: parseInt(subcategoriaId, 10),
             };
 
             if (editing && producto) {
@@ -160,6 +190,30 @@ export default function AdminProductoForm() {
         keyboardType="numeric"
       />
 
+      {/* ── CAMPO: Categoría ───────────────────────────────────────────── */}
+      <Text style={styles.label}>Categoria ID</Text>
+      <TextInput
+        style={styles.input}
+        value={categoriaId}
+        onChangeText={setCategoriaId}
+        keyboardType="numeric"
+      />
+      {categorias.length ? (
+        <Text style={styles.note}>Categorias disponibles: {categorias.map((cat) => `${cat.id}:${cat.nombre}`).join(', ')}</Text>
+      ) : null}
+
+      {/* ── CAMPO: Subcategoría ────────────────────────────────────────── */}
+      <Text style={styles.label}>Subcategoria ID</Text>
+      <TextInput
+        style={styles.input}
+        value={subcategoriaId}
+        onChangeText={setSubcategoriaId}
+        keyboardType="numeric"
+      />
+      {subcategorias.length ? (
+        <Text style={styles.note}>Subcategorias disponibles: {subcategorias.map((sub) => `${sub.id}:${sub.nombre}`).join(', ')}</Text>
+      ) : null}
+
       {/* ── CAMPO: URL Imagen ───────────────────────────────────────────── */}
       <Text style={styles.label}>URL Imagen</Text>
       <TextInput
@@ -190,4 +244,5 @@ const styles = StyleSheet.create({
   label: { fontWeight: 'bold', marginTop: 10 },
   // Campo de texto: borde gris, esquinas ligeramente redondeadas, padding interior.
   input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 5, padding: 8, marginTop: 5, marginBottom: 10 },
+  note: { color: '#555', fontSize: 12, marginBottom: 10 },
 });

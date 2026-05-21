@@ -98,7 +98,7 @@ export default function AdminProductosScreen() {
         fetchProductos(nueva, busqueda);
     };
 
-    const isAdmin = user?.rol === 'Administrador';
+    const isAdmin = user?.rol === 'administrador';
 
       // ── RENDERIZADO ───────────────────────────────────────────────────────────
   return (

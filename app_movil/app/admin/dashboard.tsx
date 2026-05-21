@@ -88,25 +88,25 @@ export default function AdminDashboardScreen() {
                     apiClient.get('/admin/pedidos/estadisticas')
                 ]);
 
-                //los stats de usuarios solo piden si el usuario es administrador 
-                // los auxiliares no tiene acceso a este enipont
-                const userStats = isAdmin ? await apiClient.get('admin/usuarios/stats') 
-                : null;
-                
-                // extraer los datos de cada resouesta con optional chaining y fallback
+                // los stats de usuarios solo piden si el usuario es administrador
+                // los auxiliares no tienen acceso a este endpoint
+                const userStats = isAdmin ? await apiClient.get('/admin/usuarios/stats') : null;
+
+                // extraer los datos de cada respuesta con optional chaining y fallback
                 const catsData = cats.data?.data?.categorias || [];
                 const subsData = subs.data?.data?.subcategorias || [];
-                const ordStats = orders.data?.data?.stats || [];
-                
-                // actualizar el estado con todos los contadores calculados 
+                const ordStats = orders.data?.data || {};
+                const usersStats = userStats?.data?.data || {};
+
+                // actualizar el estado con todos los contadores calculados
                 setStast({
                     categorias: Array.isArray(catsData) ? catsData.length : 0,
                     subcategorias: Array.isArray(subsData) ? subsData.length : 0,
                     productos: prods.data?.data?.paginacion?.total || 0,
-                    usuarios: userStats?.data?.data?.stats?.totalUsuarios || 0,
+                    usuarios: usersStats.total || 0,
                     pedidos: ordStats.totalPedidos || 0,
-                    pendientes: ordStats.pedidosPendientes || 0,
-                    ventas: ordStats.ventasTotales || 0,
+                    pendientes: ordStats.pedidosPorEstado?.find((p: any) => p.estado === 'pendiente')?.cantidad || 0,
+                    ventas: parseFloat(ordStats.ventasTotales || 0),
                 });
             } catch (_) {
                 // si alguna peticion falla simplemente se ignora el error
@@ -139,7 +139,7 @@ export default function AdminDashboardScreen() {
   // El campo 'show' controla si la tarjeta se renderiza o no.
   // La tarjeta de 'Usuarios' solo se muestra a administradores (show: isAdmin).
   const cards: StatCard[] = [
-    { title: 'Categorías',    value: stats.categorias,    icon: 'folder-outline',      gradient: ['#667eea', '#764ba2'], route: '/admin/productos', show: true },
+    { title: 'Categorías',    value: stats.categorias,    icon: 'folder-outline',      gradient: ['#667eea', '#764ba2'], route: '/admin/categorias', show: true },
     { title: 'Subcategorías', value: stats.subcategorias, icon: 'folder-open-outline', gradient: ['#06b6d4', '#0891b2'], route: '/admin/productos', show: true },
     { title: 'Productos',     value: stats.productos,     icon: 'cube-outline',        gradient: ['#10b981', '#059669'], route: '/admin/productos', show: true },
     { title: 'Usuarios',      value: stats.usuarios,      icon: 'people-outline',      gradient: ['#f59e0b', '#d97706'], route: '/admin/usuarios',  show: isAdmin }, // Solo admin.
@@ -241,7 +241,7 @@ export default function AdminDashboardScreen() {
             <Text style={[styles.actionText, { color: '#6366f1' }]}>Agregar Producto</Text>
           </Pressable>
           {/* Botón: Agregar Categoría → también va a /admin/productos donde se gestionan (verde) */}
-          <Pressable style={[styles.actionBtn, { borderColor: '#10b981' }]} onPress={() => push('/admin/productos')}>
+          <Pressable style={[styles.actionBtn, { borderColor: '#10b981' }]} onPress={() => push('/admin/categorias')}>
             <Ionicons name="add-circle-outline" size={18} color="#10b981" />
             <Text style={[styles.actionText, { color: '#10b981' }]}>Agregar Categoría</Text>
           </Pressable>

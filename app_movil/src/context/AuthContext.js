@@ -48,14 +48,12 @@ export function AuthProvider({ children }) {
      */
 
     const login = useCallback(async (email, password) => {
-        const response = await authService.login(email,password);
-        // El backend puede devolver el playload dentro de respose.data o directo
-        const payload = response.data || response;
+        const payload = await authService.login(email,password);
 
         setToken(payload?.token || null);
-        setUser(payload?.user || null);
+        setUser(payload?.usuario || payload?.user || null);
 
-        return response;
+        return payload;
     }, []);
 
     /**

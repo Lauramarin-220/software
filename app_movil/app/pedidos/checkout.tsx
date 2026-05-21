@@ -126,9 +126,9 @@ export default function CheckoutScreen() {
 
       // Si el servidor devuelve el ID, lo pasa como query param para mostrar detalles.
       if (pedidoId) {
-        routerReplace(`/pedido-confirmado?pedidoId=${pedidoId}`);
+        routerReplace(`/pedidos/pedido-confirmado?pedidoId=${pedidoId}`);
       } else {
-        routerReplace('/pedido-confirmado'); // Fallback sin ID (muestra pantalla genérica).
+        routerReplace('/pedidos/pedido-confirmado'); // Fallback sin ID (muestra pantalla genérica).
       }
     } catch (error: unknown) {
       setErrorMessage((error as { message?: string })?.message || 'No fue posible confirmar el pedido.');

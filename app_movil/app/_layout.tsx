@@ -13,9 +13,9 @@ import { Stack } from 'expo-router';          // Navegación por pila (Stack Nav
 import { StatusBar } from 'expo-status-bar';  // Barra de estado del sistema operativo.
 import 'react-native-reanimated';             // Requerido por Reanimated para funcionar antes de cualquier animación.
 
-import { useColorScheme } from '../../hooks/use-color-scheme'; // Hook que detecta si el dispositivo está en modo oscuro.
-import { AuthProvider } from '../../src/context/AuthContext';   // Proveedor de sesión de usuario (login/logout).
-import { CarritoProvider } from '../../src/context/CarritoContext'; // Proveedor del estado global del carrito.
+import { useColorScheme } from '../hooks/use-color-scheme'; // Hook que detecta si el dispositivo está en modo oscuro.
+import { AuthProvider } from '../src/context/AuthContext';   // Proveedor de sesión de usuario (login/logout).
+import { CarritoProvider } from '../src/context/CarritoContext'; // Proveedor del estado global del carrito.
 
 // ── CONFIGURACIÓN DE EXPO ROUTER ──────────────────────────────────────────────
 // unstable_settings.anchor define la pantalla inicial al abrir la app.
@@ -45,6 +45,7 @@ export default function RootLayout() {
             {/* ── Pantallas del panel de administración ── */}
             <Stack.Screen name="admin/dashboard" options={{ title: 'Dashboard Admin' }} />
             <Stack.Screen name="admin/productos" options={{ title: 'Productos' }} />
+            <Stack.Screen name="admin/categorias" options={{ title: 'Categorías' }} />
             <Stack.Screen name="admin/producto-form" options={{ title: 'Crear/Editar Producto' }} />
             <Stack.Screen name="admin/usuarios" options={{ title: 'Usuarios' }} />
             <Stack.Screen name="admin/pedidos" options={{ title: 'Pedidos' }} />
@@ -52,13 +53,11 @@ export default function RootLayout() {
             <Stack.Screen name="admin/pedidos/[id]" options={{ title: 'Detalle Pedido' }} />
 
             {/* ── Pantallas del flujo de compra del cliente ── */}
-            <Stack.Screen name="checkout" options={{ title: 'Checkout' }} />
-            <Stack.Screen name="mis-pedidos" options={{ title: 'Mis pedidos' }} />
-            {/* Ruta dinámica para el detalle de un pedido del cliente. */}
+            <Stack.Screen name="pedidos/checkout" options={{ title: 'Checkout' }} />
+            <Stack.Screen name="pedidos/mis-pedidos" options={{ title: 'Mis pedidos' }} />
+            <Stack.Screen name="pedidos/pedido-confirmado" options={{ title: 'Pedido confirmado' }} />
             <Stack.Screen name="pedidos/[id]" options={{ title: 'Detalle pedido' }} />
-
-            {/* Modal global: se presenta sobre la pantalla actual con animación de hoja. */}
-            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+            <Stack.Screen name="pedidos/modal" options={{ presentation: 'modal', title: 'Modal' }} />
           </Stack>
 
           {/* StatusBar: ajusta automáticamente el color de los íconos (claro/oscuro) según el tema. */}

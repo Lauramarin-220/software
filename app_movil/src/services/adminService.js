@@ -25,13 +25,25 @@ export async function deleteProduct(id) {
 
 // Activar y Desactivar un producto en el backend 
 export async function activarProducto(id) {
-    const res = await api.patch(`/admin/productos/${id}/activar`);
+    const res = await api.patch(`/admin/productos/${id}/toggle`);
     return res.data;
 }
 
 // Activar y Desactivar un producto en el backend 
 export async function desactivarProducto(id) {
-    const res = await api.patch(`/admin/productos/${id}/desactivar`);
+    const res = await api.patch(`/admin/productos/${id}/toggle`);
+    return res.data;
+}
+
+// Obtiene todas las categorías del panel admin.
+export async function getCategorias() {
+    const res = await api.get('/admin/categorias');
+    return res.data?.data || res.data;
+}
+
+// Crea una nueva categoría en el backend.
+export async function crearCategoria(data) {
+    const res = await api.post('/admin/categorias', data);
     return res.data;
 }
 
