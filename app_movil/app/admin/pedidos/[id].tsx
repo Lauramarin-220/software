@@ -110,16 +110,22 @@ export default function AdminPedidoDetalleScreen() {
      * enviando, entregado, cancelado
      */
     const cambiarEstado = async (nuevoEstado: string ) => {
-        setCambiando(true); //bloquea los botones para evitar cicks multiples
-        try {
-            // PATCH/ admin/pedidos/:id/estado con el nuevo estado en el body 
-            await apiClient.patch(`admin/pedidos/${id}/estado`, { estado: nuevoEstado});
-        } catch {
-            // si falla muestra un alet nativo con el mensaje de error
-            Alert.alert('Error', 'no se pudo cambiar el estado del pedido')
-        } finally {
-            setCambiando(false); // desbloque los botones
-        }
+      setCambiando(true); // bloquea los botones para evitar clicks múltiples
+      try {
+            // PUT /admin/pedidos/:id/estado con el nuevo estado en el body (backend espera PUT)
+            await apiClient.put(`/admin/pedidos/${id}/estado`, { estado: nuevoEstado });
+
+        // Recargar el pedido para reflejar el nuevo estado en la UI
+        await fetchPedido();
+
+        Alert.alert('Éxito', 'Estado del pedido actualizado');
+      } catch (error: unknown) {
+        // muestra el mensaje de error del backend si existe
+        const msg = (error as any)?.message || 'No se pudo cambiar el estado del pedido';
+        Alert.alert('Error', msg);
+      } finally {
+        setCambiando(false); // desbloquea los botones
+      }
     };
     // ── RENDERIZADO CONDICIONAL: cargando ─────────────────────────────────────
   // Mientras la petición está en curso, muestra un spinner y un texto.

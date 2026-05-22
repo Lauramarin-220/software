@@ -105,18 +105,28 @@ export default function CarritoScreen() {
     // Muestra el dialogo de confirmacion de vaciar carrito
     // si esta autenticado navega directamente a la pantalla de pagos 
     const handlerVaciarCarrito = () => {
-        if (!isAuthenticated) (
-            Alert.alert(
-                'Vaciar Carrito',
-                '¿Estas seguro de vaciar el carrito?',
-                [
-                    //Boton cancelar cierra el dialogo sin hacer nada 
-                    { text: 'Cancela', style: 'cancel' },
-                    // boton iniciar sesion lleva a pestañas cuenta explore.tsx
-                    { text: 'Vaciar', style: 'destructive', onPress: () => vaciarCarrito() },
-                ]
-            )
+      // Si no está autenticado, pedir que inicie sesión antes de vaciar
+      if (!isAuthenticated) {
+        Alert.alert(
+          'Vaciar Carrito',
+          'Debes iniciar sesión para vaciar el carrito',
+          [
+            { text: 'Cancelar', style: 'cancel' },
+            { text: 'Iniciar Sesión', onPress: () => routerReplace('/explore') },
+          ]
         );
+        return;
+      }
+
+      // Usuario autenticado: confirmar acción y vaciar
+      Alert.alert(
+        'Vaciar Carrito',
+        '¿Estás seguro de vaciar el carrito?',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Vaciar', style: 'destructive', onPress: () => vaciarCarrito() },
+        ]
+      );
     };
 
     /**

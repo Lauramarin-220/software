@@ -134,7 +134,7 @@ const carritoService = {
     // vacia por completo el carrito local o remoto
     clearcarrito: async (isAuthenticated) => {
         if (isAuthenticated) {
-            await apiClient.delete('cliente/carrito');
+            await apiClient.delete('/cliente/carrito');
             return;
         }
 
@@ -151,7 +151,7 @@ const carritoService = {
 
         for (const item of localItems) {
             try {
-                await apiClient.post('cliente/carrito', {
+                await apiClient.post('/cliente/carrito', {
                     productoId: item.productoId,
                     cantidad: item.cantidad
                 });
