@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useAuth } from '../../src/context/AuthContext';
 import { crearCategoria, getCategorias } from '../../src/services/adminService';
 import { ThemedText } from '../../components/themed-text';
@@ -80,64 +80,71 @@ export default function AdminCategoriasScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <ThemedText type="title">Categorías</ThemedText>
+    <FlatList
+      data={categorias}
+      keyExtractor={(item, index) => String(item.id ?? index)}
+      nestedScrollEnabled
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      ListHeaderComponent={
+        <>
+          <ThemedText type="title">Categorías</ThemedText>
 
-      <View style={styles.section}>
-        <ThemedText type="subtitle">Crear nueva categoría</ThemedText>
+          <View style={styles.section}>
+            <ThemedText type="subtitle">Crear nueva categoría</ThemedText>
 
-        <TextInput
-          value={nombre}
-          onChangeText={setNombre}
-          placeholder="Nombre de la categoría"
-          style={styles.input}
-        />
-        <TextInput
-          value={descripcion}
-          onChangeText={setDescripcion}
-          placeholder="Descripción (opcional)"
-          style={[styles.input, styles.textArea]}
-          multiline
-          numberOfLines={3}
-        />
+            <TextInput
+              value={nombre}
+              onChangeText={setNombre}
+              placeholder="Nombre de la categoría"
+              style={styles.input}
+            />
+            <TextInput
+              value={descripcion}
+              onChangeText={setDescripcion}
+              placeholder="Descripción (opcional)"
+              style={[styles.input, styles.textArea]}
+              multiline
+              numberOfLines={3}
+            />
 
-        {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
-        {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
+            {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+            {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
 
-        <Pressable style={styles.saveBtn} onPress={handleCrearCategoria} disabled={saving}>
-          <ThemedText style={styles.saveBtnText}>{saving ? 'Guardando...' : 'Guardar categoría'}</ThemedText>
-        </Pressable>
-      </View>
+            <Pressable style={styles.saveBtn} onPress={handleCrearCategoria} disabled={saving}>
+              <ThemedText style={styles.saveBtnText}>{saving ? 'Guardando...' : 'Guardar categoría'}</ThemedText>
+            </Pressable>
+          </View>
 
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <ThemedText type="subtitle">Categorías existentes</ThemedText>
-          <ThemedText>{categorias.length} total</ThemedText>
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <ThemedText type="subtitle">Categorías existentes</ThemedText>
+              <ThemedText>{categorias.length} total</ThemedText>
+            </View>
+          </View>
+        </>
+      }
+      renderItem={({ item }) => (
+        <View style={styles.categoryCard}>
+          <View>
+            <Text style={styles.categoryName}>{item.nombre}</Text>
+            <Text style={styles.categoryDescription}>{item.descripcion || 'Sin descripción'}</Text>
+          </View>
+          <Text style={[styles.categoryStatus, { color: item.activo ? '#10b981' : '#ef4444' }]}>
+            {item.activo ? 'Activo' : 'Inactivo'}
+          </Text>
         </View>
-
-        {loading ? (
+      )}
+      ListEmptyComponent={!loading ? <Text style={styles.emptyText}>No hay categorías todavía.</Text> : null}
+      ListFooterComponent={
+        loading ? (
           <View style={styles.loadingRow}>
             <ActivityIndicator size="large" />
             <Text style={styles.loadingText}>Cargando categorías...</Text>
           </View>
-        ) : (
-          <FlatList
-            data={categorias}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }) => (
-              <View style={styles.categoryCard}>
-                <View>
-                  <Text style={styles.categoryName}>{item.nombre}</Text>
-                  <Text style={styles.categoryDescription}>{item.descripcion || 'Sin descripción'}</Text>
-                </View>
-                <Text style={[styles.categoryStatus, { color: item.activo ? '#10b981' : '#ef4444' }]}> {item.activo ? 'Activo' : 'Inactivo'}</Text>
-              </View>
-            )}
-            ListEmptyComponent={<Text style={styles.emptyText}>No hay categorías todavía.</Text>}
-          />
-        )}
-      </View>
-    </ScrollView>
+        ) : null
+      }
+    />
   );
 }
 
