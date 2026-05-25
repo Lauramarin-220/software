@@ -16,8 +16,10 @@
  */
 
 import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useCallback } from 'react';
 
 import { router } from "expo-router";
+import { useFocusEffect } from '@react-navigation/native';
 // Ionicons libreria de iconos vectoriales para react native 
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from '../../src/context/AuthContext';
@@ -36,6 +38,8 @@ type CarritoCtx = {
     totalItems: number;
     //loading true mientras el contexto carga los datos iniciales 
     loading: boolean;
+    // recarga el carrito desde el backend o storage cuando la pantalla entra en foco
+    refreshCarrito: () => Promise<void>;
     //cambiar cantidad actualiza la cantidad de un producto
     cambiarCantidad: ( id: string, cantidad: number ) => Promise<void>;
     //Eliminar item elimina un producto del carrito
@@ -64,7 +68,13 @@ export default function CarritoScreen() {
 
     //obtiene del cotexto del carrito los datos y funciones necesarias 
     //se usa as CarritoCtx porque el contexto de JS y typescript no infiere en tipos 
-    const { items, total, loading, cambiarCantidad, eliminarItem, vaciarCarrito } =useCarrito() as CarritoCtx
+    const { items, total, loading, refreshCarrito, cambiarCantidad, eliminarItem, vaciarCarrito } = useCarrito() as CarritoCtx
+
+    useFocusEffect(
+      useCallback(() => {
+        refreshCarrito();
+      }, [refreshCarrito])
+    );
 
     //pantalla de carga
     //si el carrito aun esta cargando por ejemplo recuperando datos guardados

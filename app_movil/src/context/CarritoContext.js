@@ -21,8 +21,8 @@ export function CarritoProvider({ children }) {
     // estado del carrito
     const [items, setItems ] = useState([]); // Lista de productos en el carrito
     const [totalItems, setTotalItems ] = useState(0); // suma de cantidades
-    const [total, setTotal ] = useState([0]); //precio total
-    const [loading, setLoading ] = useState([true]); //true mientras carga el carrito
+    const [total, setTotal ] = useState(0); // precio total
+    const [loading, setLoading ] = useState(true); // true mientras carga el carrito
 
     //Rastrea si el usuario esta autenticado en el render anterior para detectar en el momento exacto de inicio de sesion
     const prevAuthenticated = useRef(false);
