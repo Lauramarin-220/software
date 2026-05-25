@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useAuth } from '../../src/context/AuthContext';
-import { crearCategoria, getCategorias } from '../../src/services/adminService';
+import { crearCategoria, getCategorias, toggleCategoria } from '../../src/services/adminService';
 import { ThemedText } from '../../components/themed-text';
 
 type Categoria = {
@@ -19,9 +19,11 @@ export default function AdminCategoriasScreen() {
 
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [activo, setActivo] = useState(true);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -57,9 +59,14 @@ export default function AdminCategoriasScreen() {
     setSuccessMessage('');
 
     try {
-      await crearCategoria({ nombre: nombre.trim(), descripcion: descripcion.trim() || undefined });
+      await crearCategoria({
+        nombre: nombre.trim(),
+        descripcion: descripcion.trim() || undefined,
+        activo
+      });
       setNombre('');
       setDescripcion('');
+      setActivo(true);
       setSuccessMessage('Categoría creada con éxito.');
       fetchCategorias();
     } catch (error: unknown) {
@@ -67,6 +74,25 @@ export default function AdminCategoriasScreen() {
       setErrorMessage(err?.response?.data?.message || err?.message || 'No se pudo crear la categoría.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggleCategoria = async (id?: number) => {
+    if (id === undefined) return;
+
+    setTogglingId(id);
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    try {
+      const response = await toggleCategoria(id);
+      setSuccessMessage(response?.message || 'Estado de categoría actualizado.');
+      fetchCategorias();
+    } catch (error: unknown) {
+      const err = error as any;
+      setErrorMessage(err?.message || 'No se pudo actualizar el estado de la categoría.');
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -108,6 +134,19 @@ export default function AdminCategoriasScreen() {
               numberOfLines={3}
             />
 
+            <View style={styles.toggleRow}>
+              <Text style={styles.toggleLabel}>Estado</Text>
+              <Pressable
+                style={[
+                  styles.statusToggle,
+                  { backgroundColor: activo ? '#10b981' : '#ef4444' }
+                ]}
+                onPress={() => setActivo(!activo)}
+              >
+                <Text style={styles.statusToggleText}>{activo ? 'Activo' : 'Inactivo'}</Text>
+              </Pressable>
+            </View>
+
             {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
             {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
 
@@ -126,13 +165,27 @@ export default function AdminCategoriasScreen() {
       }
       renderItem={({ item }) => (
         <View style={styles.categoryCard}>
-          <View>
+          <View style={styles.categoryInfo}>
             <Text style={styles.categoryName}>{item.nombre}</Text>
             <Text style={styles.categoryDescription}>{item.descripcion || 'Sin descripción'}</Text>
           </View>
-          <Text style={[styles.categoryStatus, { color: item.activo ? '#10b981' : '#ef4444' }]}>
-            {item.activo ? 'Activo' : 'Inactivo'}
-          </Text>
+          <View style={styles.categoryActions}>
+            <Text style={[styles.categoryStatus, { color: item.activo ? '#10b981' : '#ef4444' }]}>
+              {item.activo ? 'Activo' : 'Inactivo'}
+            </Text>
+            <Pressable
+              style={[
+                styles.toggleBtn,
+                { backgroundColor: item.activo ? '#ef4444' : '#10b981' }
+              ]}
+              onPress={() => handleToggleCategoria(item.id)}
+              disabled={togglingId === item.id}
+            >
+              <Text style={styles.toggleBtnText}>
+                {togglingId === item.id ? 'Espere...' : item.activo ? 'Desactivar' : 'Activar'}
+              </Text>
+            </Pressable>
+          </View>
         </View>
       )}
       ListEmptyComponent={!loading ? <Text style={styles.emptyText}>No hay categorías todavía.</Text> : null}
@@ -162,11 +215,20 @@ const styles = StyleSheet.create({
   loadingRow: { alignItems: 'center', gap: 10, marginTop: 16 },
   loadingText: { color: '#374151' },
   categoryCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10, backgroundColor: '#fff', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: '#e5e7eb', marginBottom: 10 },
+  categoryInfo: { flex: 1, paddingRight: 12 },
+  categoryActions: { alignItems: 'flex-end', gap: 8 },
   categoryName: { fontSize: 16, fontWeight: '700' },
   categoryDescription: { color: '#6b7280', marginTop: 4 },
   categoryStatus: { fontSize: 12, fontWeight: '700' },
+  toggleBtn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 999 },
+  toggleBtnText: { color: '#fff', fontWeight: '700' },
   emptyText: { color: '#6b7280', textAlign: 'center', marginTop: 16 },
+  toggleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
+  toggleLabel: { fontSize: 14, fontWeight: '700', color: '#374151' },
+  statusToggle: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 999 },
+  statusToggleText: { color: '#fff', fontWeight: '700' },
   restrictedContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
   restrictedTitle: { fontSize: 20, fontWeight: '700', marginBottom: 12 },
   restrictedSubtitle: { color: '#6b7280', textAlign: 'center' },
 });
+

@@ -47,4 +47,10 @@ export async function crearCategoria(data) {
     return res.data;
 }
 
+// Activa o desactiva una categoría existente en el backend.
+export async function toggleCategoria(id) {
+    const res = await api.patch(`/admin/categorias/${id}/toggle`);
+    return res.data;
+}
+
 
